@@ -2,6 +2,8 @@
         android:layout_width="match_parent" android:layout_height="match_parent"
         android:background="#BDB067"
         android:orientation="vertical"
+        android:textDirection="ltr"
+        android:layoutDirection="ltr"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
         <LinearLayout
@@ -24,9 +26,26 @@
 
                         <ImageButton android:id="@+id/btnExit"
                                      android:layout_width="85dp" android:layout_height="85dp"
-                                     android:layout_centerVertical="true" android:background="#CA2C20"
+                                     android:layout_alignParentStart="true"
+                                     android:layout_centerVertical="true" android:tint="#CA2C20"
+                                     android:background="#00000000"
                                      android:scaleX="-1" android:scaleType="fitXY"
                                      android:src="@drawable/ic_exit"/>
+
+                        <ImageButton android:id="@+id/btnAbout"
+                                     android:layout_width="70dp" android:layout_height="70dp"
+                                     android:layout_centerInParent="true" android:tint="#FF5722"
+                                     android:background="#00000000"
+                                     android:scaleX="-1" android:scaleType="fitXY"
+                                     android:src="@drawable/ic_about"/>
+
+                        <ImageButton android:id="@+id/btnAddNote"
+                                     android:layout_alignParentEnd="true"
+                                     android:layout_width="85dp" android:layout_height="85dp"
+                                     android:layout_centerVertical="true" android:tint="#06910B"
+                                     android:background="#00000000"
+                                     android:scaleX="-1" android:scaleType="fitXY"
+                                     android:src="@drawable/ic_add"/>
 
 
 
