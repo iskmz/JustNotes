@@ -182,7 +182,7 @@ class NoteListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        notesDB = NotesDB(activity!!.applicationContext)
+        notesDB = NotesDB(activity!!)
         refreshAdapter()
 
     }
@@ -199,7 +199,7 @@ class NoteListFragment : Fragment() {
         else {
             lstNoteList.visibility = View.VISIBLE
             txtEmptyNotesMsg.visibility = View.GONE
-            adapter = NotesAdapter(activity!!.applicationContext)
+            adapter = NotesAdapter(activity!!)
             lstNoteList.setAdapter(adapter)
         }
 
@@ -242,7 +242,13 @@ class AddNoteFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        clearFields()
         setListeners()
+    }
+
+    private fun clearFields() {
+        txtTitle.setText("")
+        txtBody.setText("")
     }
 
     private fun setListeners() {
@@ -253,15 +259,16 @@ class AddNoteFragment : Fragment() {
 
             if (checkFields(title,body)) saveNote(title,body)
         }
+
     }
 
     private fun saveNote(title: String, body: String) {
 
-        val notesDB = NotesDB(context!!)
+        val notesDB = NotesDB(activity!!)
 
         if(notesDB.addNoteNow(title,body))
         {
-            Toast.makeText(context,"Note was added successfully!",Toast.LENGTH_LONG).show()
+            Toast.makeText(activity!!,"Note was added successfully!",Toast.LENGTH_LONG).show()
 
             // switch buttons visibility !! //
             val vBtnBackToList = myView.rootView.findViewById<ImageButton>(R.id.btnBackToList)
@@ -278,7 +285,7 @@ class AddNoteFragment : Fragment() {
         }
         else
         {
-            Toast.makeText(context,"ERROR while adding note !!!",Toast.LENGTH_LONG).show()
+            Toast.makeText(activity!!,"ERROR while adding note !!!",Toast.LENGTH_LONG).show()
         }
 
 
@@ -288,7 +295,7 @@ class AddNoteFragment : Fragment() {
 
         if(title.isEmpty() || body.isEmpty())
         {
-            Toast.makeText(context,"BOTH fields must NOT be empty!",Toast.LENGTH_LONG).show()
+            Toast.makeText(activity!!,"BOTH fields must NOT be empty!",Toast.LENGTH_LONG).show()
             return false
         }
         return true

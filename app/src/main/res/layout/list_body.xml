@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/back_note_item"
                 android:orientation="horizontal"
                 android:padding="10dp">
 
@@ -8,8 +9,10 @@
     <TextView
             android:id="@+id/txtNoteDateTime"
             android:layout_width="wrap_content"   android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true" android:textSize="14sp"
+            android:layout_below="@id/txtNoteBody" android:textSize="14sp"
+            android:layout_alignParentStart="true"
             android:paddingStart="10dp" android:paddingEnd="10dp"
+            android:layout_marginTop="5dp"
             android:gravity="center" android:text=" YYYY-MM-DD , HH:mm:ss " android:textStyle="italic"
             android:textColor="#A29898"
     />
@@ -17,7 +20,8 @@
     <TextView
             android:id="@+id/txtNoteBody"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_below="@id/txtNoteDateTime" android:layout_marginStart="5dp"
+            android:layout_alignParentStart="true" android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp" android:layout_marginTop="5dp"
             android:textSize="16sp"
             android:text="i am a note written by a someone in order to remind him/her of something ....... yo yo yo !!! i am a note written by a someone in order to remind him/her of something ....... yo yo yo !!! i am a note written by a someone in order to remind him/her of something ....... yo yo yo !!!"
             android:textColor="#FFFFFF"

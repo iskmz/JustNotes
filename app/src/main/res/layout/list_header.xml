@@ -19,6 +19,7 @@
                     android:layout_toEndOf="@id/txtNoteOrder" android:layout_marginStart="10dp"
                     android:textSize="16sp" android:textStyle="italic"
                     android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
                     android:maxLines="2" android:text="i am a note written by a someone ......................"
                     android:textColor="#FFFFFF"
             />
