@@ -3,7 +3,6 @@ package com.iskandar.justnotes
 
 import android.content.Context
 import android.database.Cursor
-import android.database.DataSetObserver
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Bundle
@@ -15,16 +14,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
-import android.widget.ExpandableListAdapter
-import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_addnote.*
 import kotlinx.android.synthetic.main.fragment_notelist.*
 import kotlinx.android.synthetic.main.list_body.view.*
 import kotlinx.android.synthetic.main.list_header.view.*
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.io.File
 
