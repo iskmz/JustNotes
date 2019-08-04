@@ -88,6 +88,9 @@ class NotesDB(context:Context) : SQLiteOpenHelper(context,"myNotes.db",null,1)
         return res != (-1).toLong()
     }
 
+    fun removeNote(datetime: Long) = db.execSQL("DELETE FROM "+ TABLE_NAME
+            +" WHERE "+ COL_DATETIME+"=" + datetime.toString())
+
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
 
 }
@@ -299,6 +302,8 @@ class AddNoteFragment : Fragment() {
 class NotesAdapter(val context : Context) : BaseExpandableListAdapter() {
 
 
+    val notesDB = NotesDB(context)
+
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View {
         val v = LayoutInflater.from(context).inflate(R.layout.list_header,null)
         v.txtNoteOrder.text = (groupPosition+1).toString()
@@ -314,8 +319,26 @@ class NotesAdapter(val context : Context) : BaseExpandableListAdapter() {
         v.txtNoteDateTime.text = SimpleDateFormat("yyyy-MM-dd , HH:mm:ss")
             .format(Date(notes[groupPosition].dateTime))
         v.txtNoteBody.text = notes[groupPosition].content
-        // TO-DO // v.btnNoteDelete.setOnClickListener {  }
+        v.btnNoteDelete.setOnClickListener { showRemoveNoteDialog(groupPosition) }
         return v
+    }
+
+    private fun showRemoveNoteDialog(pos: Int) {
+        val removeme = AlertDialog.Builder(context)
+            .setIcon(R.drawable.ic_warning_red)
+            .setTitle("REMOVE this note !")
+            .setMessage("Are you sure you want to remove Note # ${pos+1} ?!")
+            .setPositiveButton("CONFIRM") { dialog, _ ->
+                notesDB.removeNote(notes[pos].dateTime) // from db itself
+                notes.removeAt(pos) // from data list
+                notifyDataSetChanged() // refresh adapter
+                dialog.dismiss()
+            }
+            .setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }
+            .create()
+
+        removeme.setCanceledOnTouchOutside(false)
+        removeme.show()
     }
 
     override fun getGroupId(groupPosition: Int) = groupPosition.toLong()
