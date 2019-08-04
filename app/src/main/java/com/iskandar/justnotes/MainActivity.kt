@@ -172,7 +172,7 @@ class NotesAdapter(val context : Context) : BaseExpandableListAdapter() {
 
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View {
 
-        val v = LayoutInflater.from(context).inflate(R.layout.list_header,parent)
+        val v = LayoutInflater.from(context).inflate(R.layout.list_header,null)
 
         if(notes.size==0)
         {
@@ -192,7 +192,7 @@ class NotesAdapter(val context : Context) : BaseExpandableListAdapter() {
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?,
                               parent: ViewGroup?): View
     {
-        val v = LayoutInflater.from(context).inflate(R.layout.list_body,parent)
+        val v = LayoutInflater.from(context).inflate(R.layout.list_body,null)
 
         v.txtNoteDateTime.text = SimpleDateFormat("yyyy-MM-dd , HH:mm:ss")
             .format(Date(notes[groupPosition].dateTime))
