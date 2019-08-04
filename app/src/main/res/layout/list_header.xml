@@ -10,17 +10,17 @@
                     android:layout_width="40dp"   android:layout_height="40dp"
                     android:layout_alignParentStart="true" android:textSize="20sp"
                     android:gravity="center" android:text="999" android:textStyle="bold"
-                    android:textColor="#A29898"
+                    android:textColor="#A29898" android:layout_marginStart="10dp"
             />
 
             <TextView
                     android:id="@+id/txtNoteTitle"
                     android:layout_width="match_parent" android:layout_height="40dp"
-                    android:layout_toEndOf="@id/txtNoteOrder" android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/txtNoteOrder" android:layout_marginStart="10dp"
                     android:textSize="16sp" android:textStyle="italic"
                     android:layout_centerVertical="true"
-                    android:maxLines="2" android:text="i am a note written by a someone in order to remind him/her of something ....... yo yo yo !!!"
-                    android:lines="2"  android:textColor="#FFFFFF"
+                    android:maxLines="2" android:text="i am a note written by a someone ......................"
+                    android:textColor="#FFFFFF"
             />
 
 

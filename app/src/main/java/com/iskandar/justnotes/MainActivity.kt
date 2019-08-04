@@ -2,10 +2,14 @@ package com.iskandar.justnotes
 
 
 import android.content.Context
+import android.database.Cursor
 import android.database.DataSetObserver
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,14 +26,57 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.io.File
 
 
-/////////////////////////// DATA classes ////////////////////////////////////////
+/////////////////////////// DATA classes ( & SQLLITE) ////////////////////////////////////////
 
 
 data class Note(var title:String , var content:String, var dateTime:Long)
 var notes = mutableListOf<Note>()
 
+class NotesDB(context:Context) : SQLiteOpenHelper(context,"myNotes.db",null,1)
+{
+    private val db = writableDatabase
+
+
+    companion object {
+        val TABLE_NAME ="NOTES"
+
+        val COL_DATETIME = "DATETIME"
+        val COL_TITLE = "TITLE"
+        val COL_BODY = "BODY"
+
+        val COLNUM_DATETIME = 0
+        val COLNUM_TITLE = 1
+        val COLNUM_BODY = 2
+    }
+
+    init {
+        // for dev. db access
+        provideAccessToDev()
+    }
+
+    private fun provideAccessToDev() {
+        if (BuildConfig.DEBUG) File(db.path).setReadable(true, false)
+        //@terminal: adb -d pull //data/data/com.iskandar.justnotes/databases/myNotes.db
+    }
+
+    override fun onCreate(db: SQLiteDatabase?) {
+        // create data table //
+        var sqlStatment = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
+        sqlStatment += COL_DATETIME + " TEXT PRIMARY KEY,"
+        sqlStatment += COL_TITLE + " TEXT,"
+        sqlStatment += COL_BODY + " TEXT,"
+        sqlStatment += ")"
+        db!!.execSQL(sqlStatment)
+    }
+
+    fun getNotesTable():Cursor = db.rawQuery("SELECT * FROM "+TABLE_NAME,null)
+
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
+
+}
 
 /////////////////////////// MAIN ACTIVITY  //////////////////////////////////////
 
@@ -75,7 +122,14 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun showAboutDialog() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val about = AlertDialog.Builder(this@MainActivity)
+            .setIcon(R.drawable.ic_info_outline)
+            .setTitle("Just Notes")
+            .setMessage("by Iskandar Mazzawi \u00A9")
+            .setPositiveButton("OK"){ dialog, _ -> dialog.dismiss() }
+            .create()
+        about.setCanceledOnTouchOutside(false)
+        about.show()
     }
 }
 
@@ -86,6 +140,7 @@ class NoteListFragment : Fragment() {
 
     private lateinit var myView : View
     private lateinit var adapter : NotesAdapter
+    private lateinit var notesDB : NotesDB
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         myView = inflater.inflate(R.layout.fragment_notelist,container,false)
@@ -95,6 +150,7 @@ class NoteListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        notesDB = NotesDB(activity!!.applicationContext)
         refreshAdapter()
 
     }
@@ -111,15 +167,20 @@ class NoteListFragment : Fragment() {
 
         val lst = mutableListOf<Note>()
 
-        lst.add(Note("note 1","sdgnosdngonasdknglsndgnsdgs",124178624L))
-        lst.add(Note("note 2","sdgnosdngonasdknglsndgnsdgs",12411816524L))
-        lst.add(Note("note 3","sdgnosdngonasdknglsndgnsdgs",12412278784L))
-        lst.add(Note("note 4","sdgnosdngonasdknglsndgnsdgs",1242158124L))
-        lst.add(Note("note 5","sdgnosdngonasdknglsndgnsdgs",124118324L))
-
+        // get data from SQL db using Cursor //
+        val res = notesDB.getNotesTable()
+        if (res.count == 0) return lst
+        while (res.moveToNext()) {
+            lst.add(
+                Note(
+                    res.getString(NotesDB.COLNUM_TITLE),
+                    res.getString(NotesDB.COLNUM_BODY),
+                    res.getString(NotesDB.COLNUM_DATETIME).toLong()
+                )
+            )
+        }
         return lst
     }
-
 }
 
 
