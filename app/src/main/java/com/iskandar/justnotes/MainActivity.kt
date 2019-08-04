@@ -62,7 +62,7 @@ class NotesDB(context:Context) : SQLiteOpenHelper(context,"myNotes.db",null,1)
         var sqlStatment = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
         sqlStatment += COL_DATETIME + " TEXT PRIMARY KEY,"
         sqlStatment += COL_TITLE + " TEXT,"
-        sqlStatment += COL_BODY + " TEXT,"
+        sqlStatment += COL_BODY + " TEXT"
         sqlStatment += ")"
         db!!.execSQL(sqlStatment)
     }
@@ -153,8 +153,18 @@ class NoteListFragment : Fragment() {
     private fun refreshAdapter() {
 
         notes = getDataFromDB()
-        adapter = NotesAdapter(activity!!.applicationContext)
-        lstNoteList.setAdapter(adapter)
+        if(notes.size==0)
+        {
+            lstNoteList.visibility = View.GONE
+            txtEmptyNotesMsg.visibility = View.VISIBLE
+            txtEmptyNotesMsg.text = " click on the (+) button below \n to start adding notes ..."
+        }
+        else {
+            lstNoteList.visibility = View.VISIBLE
+            txtEmptyNotesMsg.visibility = View.GONE
+            adapter = NotesAdapter(activity!!.applicationContext)
+            lstNoteList.setAdapter(adapter)
+        }
 
     }
 
@@ -227,20 +237,9 @@ class NotesAdapter(val context : Context) : BaseExpandableListAdapter() {
 
 
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View {
-
         val v = LayoutInflater.from(context).inflate(R.layout.list_header,null)
-
-        if(notes.size==0)
-        {
-            v.txtNoteOrder.text = ""
-            v.txtNoteTitle.text = " click on (+) below \n to start adding notes ... "
-        }
-        else
-        {
-            v.txtNoteOrder.text = (groupPosition+1).toString()
-            v.txtNoteTitle.text = notes[groupPosition].title
-        }
-
+        v.txtNoteOrder.text = (groupPosition+1).toString()
+        v.txtNoteTitle.text = notes[groupPosition].title
         return v
     }
 
@@ -249,12 +248,10 @@ class NotesAdapter(val context : Context) : BaseExpandableListAdapter() {
                               parent: ViewGroup?): View
     {
         val v = LayoutInflater.from(context).inflate(R.layout.list_body,null)
-
         v.txtNoteDateTime.text = SimpleDateFormat("yyyy-MM-dd , HH:mm:ss")
             .format(Date(notes[groupPosition].dateTime))
-
         v.txtNoteBody.text = notes[groupPosition].content
-
+        // TO-DO // v.btnNoteDelete.setOnClickListener {  }
         return v
     }
 
@@ -262,7 +259,7 @@ class NotesAdapter(val context : Context) : BaseExpandableListAdapter() {
     override fun getChildId(groupPosition: Int, childPosition: Int) = (10*groupPosition + childPosition + 1).toLong()
 
     override fun getChildrenCount(groupPosition: Int) = if(notes.size==0) 0 else 1
-    override fun getGroupCount() = if (notes.size==0) 1 else notes.size
+    override fun getGroupCount() = notes.size
 
     override fun getGroup(groupPosition: Int) = notes[groupPosition]
     override fun getChild(groupPosition: Int, childPosition: Int) = notes[groupPosition]

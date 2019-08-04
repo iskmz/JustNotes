@@ -23,5 +23,12 @@
             android:textColor="#FFFFFF"
     />
 
+    <ImageButton android:id="@+id/btnNoteDelete"
+                 android:layout_alignParentEnd="true"
+                 android:layout_below="@id/txtNoteBody"
+                 android:layout_width="40dp" android:layout_height="40dp"
+                 android:background="#00000000"
+                 android:scaleType="fitXY"
+                 android:src="@drawable/ic_delete_forever"/>
 
 </RelativeLayout>
