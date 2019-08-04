@@ -57,8 +57,9 @@ class NotesDB(context:Context) : SQLiteOpenHelper(context,"myNotes.db",null,1)
     }
 
     private fun provideAccessToDev() {
-        if (BuildConfig.DEBUG) File(db.path).setReadable(true, false)
-        //@terminal: adb -d pull //data/data/com.iskandar.justnotes/databases/myNotes.db
+        if (BuildConfig.DEBUG) File(db.path).setReadable(true,false)
+        //@terminal:
+        // follow instructions from:  https://stackoverflow.com/a/21151598
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
