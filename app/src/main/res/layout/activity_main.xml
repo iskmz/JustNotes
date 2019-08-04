@@ -43,7 +43,17 @@
                                      android:layout_centerVertical="true" android:tint="#06910B"
                                      android:background="#00000000"
                                      android:scaleX="-1" android:scaleType="fitXY"
+                                     android:visibility="visible"
                                      android:src="@drawable/ic_add"/>
+
+
+                        <ImageButton android:id="@+id/btnBackToList"
+                                     android:layout_alignParentEnd="true"
+                                     android:layout_width="85dp" android:layout_height="85dp"
+                                     android:layout_centerVertical="true" android:tint="#040A3C"
+                                     android:background="#00000000" android:scaleType="fitXY"
+                                     android:visibility="gone"
+                                     android:src="@drawable/ic_list"/>
 
 
                 </RelativeLayout>

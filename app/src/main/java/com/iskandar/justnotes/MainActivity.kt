@@ -22,6 +22,10 @@ import kotlinx.android.synthetic.main.list_header.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.io.File
+import android.provider.SyncStateContract.Helpers.update
+import android.content.ContentValues
+import android.widget.ImageButton
+import android.widget.Toast
 
 
 /////////////////////////// DATA classes ( & SQLLITE) ////////////////////////////////////////
@@ -69,6 +73,21 @@ class NotesDB(context:Context) : SQLiteOpenHelper(context,"myNotes.db",null,1)
 
     fun getNotesTable():Cursor = db.rawQuery("SELECT * FROM "+TABLE_NAME,null)
 
+    fun addNoteNow(title : String, body : String) : Boolean {
+        //create instance of ContentValues to hold our values
+        val myValues = ContentValues()
+        val datetime = System.currentTimeMillis().toString()
+        //insert data by key and value
+        myValues.put(COL_DATETIME,datetime)
+        myValues.put(COL_TITLE,title)
+        myValues.put(COL_BODY,body)
+        // INSERT new row //
+        // put values in table and get res (row id) // if res = -1 then ERROR //
+        val res = db.insert(TABLE_NAME, null, myValues)
+        //return true if we not get -1, error
+        return res != (-1).toLong()
+    }
+
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
 
 }
@@ -80,6 +99,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fm : FragmentManager
     private lateinit var noteListFragment: NoteListFragment
     private lateinit var addNoteFragment: AddNoteFragment
+
+    companion object {
+        val TAG_FRAG_NOTELIST = "NOTELIST"
+        val TAG_FRAG_ADDNOTE = "ADDNOTE"
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +119,10 @@ class MainActivity : AppCompatActivity() {
         addNoteFragment = AddNoteFragment()
         fm = supportFragmentManager
         fm.beginTransaction()
-                .add(R.id.layContainer, noteListFragment)
+                .add(R.id.layContainer, noteListFragment, TAG_FRAG_NOTELIST)
+                .add(R.id.layContainer,addNoteFragment, TAG_FRAG_ADDNOTE)
+                .replace(R.id.layContainer,noteListFragment)
+                .addToBackStack(null)
                 .commit()
     }
 
@@ -104,14 +131,21 @@ class MainActivity : AppCompatActivity() {
         btnExit.setOnClickListener { finish() }
         btnAbout.setOnClickListener { showAboutDialog() }
         btnAddNote.setOnClickListener {
-            it.visibility = View.INVISIBLE
-            switchTo(addNoteFragment)
+            it.visibility = View.GONE
+            btnBackToList.visibility = View.VISIBLE
+            switchTo(addNoteFragment, TAG_FRAG_ADDNOTE)
+        }
+
+        btnBackToList.setOnClickListener {
+            it.visibility = View.GONE
+            btnAddNote.visibility = View.VISIBLE
+            switchTo(noteListFragment, TAG_FRAG_NOTELIST)
         }
     }
 
-    private fun switchTo(frg: Fragment) {
+    private fun switchTo(frg: Fragment, tag: String) {
         fm.beginTransaction()
-            .replace(R.id.layContainer, frg)
+            .replace(R.id.layContainer, frg,tag)
             .commit()
     }
 
@@ -220,12 +254,41 @@ class AddNoteFragment : Fragment() {
 
     private fun saveNote(title: String, body: String) {
 
+        val notesDB = NotesDB(context!!)
+
+        if(notesDB.addNoteNow(title,body))
+        {
+            Toast.makeText(context,"Note was added successfully!",Toast.LENGTH_LONG).show()
+
+            // switch buttons visibility !! //
+            val vBtnBackToList = myView.rootView.findViewById<ImageButton>(R.id.btnBackToList)
+            val vBtnAddNote = myView.rootView.findViewById<ImageButton>(R.id.btnAddNote)
+            vBtnBackToList.visibility = View.GONE
+            vBtnAddNote.visibility = View.VISIBLE
+
+            // return to notelist fragment !! //
+            val fm = activity!!.supportFragmentManager
+            val noteListFragment = fm.findFragmentByTag(MainActivity.TAG_FRAG_NOTELIST)!!
+            fm.beginTransaction()
+                .replace(R.id.layContainer, noteListFragment)
+                .commit()
+        }
+        else
+        {
+            Toast.makeText(context,"ERROR while adding note !!!",Toast.LENGTH_LONG).show()
+        }
+
 
     }
 
     private fun checkFields(title: String, body: String): Boolean {
 
+        if(title.isEmpty() || body.isEmpty())
+        {
+            Toast.makeText(context,"BOTH fields must NOT be empty!",Toast.LENGTH_LONG).show()
             return false
+        }
+        return true
     }
 
 }
